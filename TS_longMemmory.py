@@ -1,18 +1,24 @@
 import pandas as pd
 import random as rd
 from itertools import combinations
+from time import process_time
 import math
 
 class TS():
-    def __init__(self, Path, seed, tabu_tenure,Penalization_weight):
+    def __init__(self, Path, seed, tabu_tenure, Penalization_weight):
         self.Path = Path
         self.seed = seed
         self.tabu_tenure = tabu_tenure
         self.Penalization_weight = Penalization_weight
         self.instance_dict = self.input_data()
         self.Initial_solution = self.get_InitialSolution()
+        self.terminate_max = tabu_tenure/10+5
+        t1_start = process_time() 
         self.tabu_str, self.Best_solution, self.Best_objvalue = self.TSearch()
-
+        t1_stop = process_time()
+        print("Elapsed time during the search in seconds:", t1_stop-t1_start)
+        print("tenure:", tabu_tenure)
+        print("Penalization_weight:", Penalization_weight)
 
     def input_data(self):
         '''Takes the path of the excel file of the SMTWTP instances.
@@ -89,7 +95,7 @@ class TS():
         iter = 1
         Terminate = 0
         # for i in range(50):
-        while Terminate < 100:
+        while Terminate < self.terminate_max:
             print('\n\n### iter {}###  Current_Objvalue: {}, Best_Objvalue: {}'.format(iter, current_objvalue,
                                                                                     best_objvalue))
             # Searching the whole neighborhood of the current solution:
@@ -153,4 +159,4 @@ class TS():
         print('#'*50 , "Performed iterations: {}".format(iter), "Best found Solution: {} , Objvalue: {}".format(best_solution,best_objvalue), sep="\n")
         return tabu_structure, best_solution, best_objvalue
 
-test = TS(Path="Data_instances/Instance_10.xlsx", seed = 2012, tabu_tenure=3, Penalization_weight=0)
+test = TS(Path="Data_instances/Instance_30.xlsx", seed = 2012, tabu_tenure=500, Penalization_weight=0.6)
